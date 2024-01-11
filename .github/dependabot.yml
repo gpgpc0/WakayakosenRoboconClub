@@ -5,8 +5,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "CocoaPods"
+    directory: "/"
     schedule:
-      interval: "weekly"
-      
+      interval: "daily" #インターバルや実行時間帯はお好みで
+      time: "06:00"
+      timezone: "Japan"
+    commit-message:
+      prefix: "Common"
+      include: "scope"
+    labels:
+      - "dependencies"  #ラベルは適宜選択・作成する
+  
