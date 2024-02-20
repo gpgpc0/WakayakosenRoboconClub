@@ -79,8 +79,9 @@ void loop() {
   int i, j;
   static int angle = 0;
   int LStickY, LStickX, RStickY, RStickX, L1, L2, UP, DOWN, SQUARE, CIRCLE, TRIANGLE, LEFT, RIGHT, CROSS, R1, R2;
-  double pwm[9], x, y, Fire = 1.0;
-  static double pwmLast[9];
+  int lY, lX, rX, rY;
+  double pwm[5], x, y, Fire = 1.0;
+  static double pwmLast[5];
   /*センサ情報を読み取る(ここではコントローラの状態)*/
   // put your main code here, to run repeatedly:
 
@@ -148,27 +149,34 @@ void loop() {
     /*****主にいじる所ここから*****/
     //モーター
 
-    pwm[1] = (LStickY + LStickX + RStickX) * 0.3;
-    pwm[2] = (-LStickY + LStickX + RStickX) * 0.3;
-    pwm[3] = (-LStickY - LStickX + RStickX) * 0.3;
-    pwm[4] = (LStickY - LStickX + RStickX) * 0.3;
+    lY = LStickY * 0.13;
+    lX = LStickX * 0.13;
+    rX = RStickX * 0.13;
+    send_data[5] = 30 + (-lY - lX + rX);
+    send_data[6] = 30 + (lY - lX + rX);
+    send_data[7] = 30 + (lY + lX + rX);
+    send_data[8] = 30 + (-lY + lX + rX);
 
-    /*2if ( && SWM == 0)for (int i = 1; i <= 4; i++) {
-        pwm[i] *= -1;
+    /*if ( && SWM == 0) {
+        lY*=-1;
+        lX*=-1;
+        rX*=-1;
         SWM = 1;
       }
-    else if ( && SWM == 1)for (int i = 1; i <= 4; i++) {
-        pwm[i] *= -1;
+    else if ( && SWM == 1) {
+        lY*=-1;
+        lX*=-1;
+        rX*=-1;
         SWM = 0;
       }*/
 
     //アームの移動
-    if (L1)pwm[5] = 100; //上
-    else if (L2 > 0)pwm[5] = -100; //下
-    else pwm[5] = 0;
-    if (UP && send_data[9] == 0b00001000)pwm[6] = -100; //前
-    else if (DOWN && send_data[9] == 0b00001000)pwm[6] = 100; //後
-    else pwm[6] = 0;
+    if (L1)pwm[1] = 100; //上
+    else if (L2 > 0)pwm[1] = -100; //下
+    else pwm[1] = 0;
+    if (UP && send_data[9] == 0b00001000)pwm[2] = -100; //前
+    else if (DOWN && send_data[9] == 0b00001000)pwm[2] = 100; //後
+    else pwm[2] = 0;
 
     //アームのつかみ
     if (SQUARE)send_data[9] |= 0b00000001;
@@ -184,19 +192,19 @@ void loop() {
     if (LEFT)Fire -= 0.1;
     if (CROSS) {
       //send_data[8] |= 0b00001000;
-      pwm[7] = 74 * Fire;
-      pwm[8] = -74 * Fire;//-73 good
+      pwm[3] = 74 * Fire;
+      pwm[4] = -74 * Fire;//-73 good
     } else {
       //send_data[8] &= 0b11110111;
-      pwm[7] = 0;
-      pwm[8] = 0;
+      pwm[3] = 0;
+      pwm[4] = 0;
     }
     //シリアルモニタに表示
     //      Serial.print("angle    ");
     //      Serial.println(angle);
 
     /*****主にいじる所ここまで*****/
-    for (i = 1; i <= 8; i++) {//各pwmの比を保ちつつ最大値を超えないように修正してsend_data[1~7]に格納,第2引数の値はモータの数と同じ
+    for (i = 1; i <= 4; i++) {//各pwmの比を保ちつつ最大値を超えないように修正してsend_data[1~7]に格納,第2引数の値はモータの数と同じ
       double pwm_abs = 0.;//絶対値
       if (pwm[i] > 0)pwm_abs = pwm[i];//pwm[i]の絶対値をpwm_absに代入．
       else pwm_abs = -pwm[i];
