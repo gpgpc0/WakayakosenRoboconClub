@@ -207,6 +207,7 @@ void loop() {
     //シリアルモニタに表示
 
     /*****主にいじる所ここまで*****/
+    for (i = 1; i < 5; i++) {//各pwmの比を保ちつつ最大値を超えないように修正してsend_data[1~2]に格納
       double pwm_abs = 0.;//絶対値
       if (pwm[i] > 0)pwm_abs = pwm[i];//pwm[i]の絶対値をpwm_absに代入．
       else pwm_abs = -pwm[i];
