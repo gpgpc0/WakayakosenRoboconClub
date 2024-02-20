@@ -212,7 +212,6 @@ void loop() {
       if (pwm[i] > 0)pwm_abs = pwm[i];//pwm[i]の絶対値をpwm_absに代入．
       else pwm_abs = -pwm[i];
       //絶対値が最大値より大きければすべてのpwmに(絶対値/最大値)をかける．
-      if (PWM_MAX < pwm_abs)for (j = 1; j < 9; j++)pwm[j] *= (PWM_MAX / pwm_abs);
       if (PWM_MAX < pwm_abs)for (j = 1; j < 5; j++)pwm[j] *= (PWM_MAX / pwm_abs);
       send_data[i] = (int)(pwm[i] + 128);//送信データに代入．
     }
